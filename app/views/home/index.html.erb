@@ -1,0 +1,23 @@
+<div class="min-h-[calc(100vh-128px)] flex items-center justify-center px-4 py-12">
+  <% if authenticated? %>
+    <div class="w-full max-w-3xl rounded-[32px] border border-slate-800/90 bg-slate-900/90 p-10 shadow-2xl shadow-slate-950/30 backdrop-blur-xl">
+      <p class="text-sm uppercase tracking-[0.35em] text-cyan-300">Panel</p>
+      <h1 class="mt-4 text-4xl font-semibold text-white">Bienvenido, <%= current_user.email_address %></h1>
+      <p class="mt-4 text-slate-400">Ya estás dentro. Accede a tu dashboard de productos para ver o administrar tu inventario.</p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <%= link_to "Ver productos", products_path, class: "inline-flex items-center justify-center rounded-full bg-cyan-500 px-6 py-4 text-base font-semibold text-slate-950 transition hover:bg-cyan-400" %>
+        <%= button_to "Cerrar sesión", session_path, method: :delete, class: "inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 px-6 py-4 text-base font-semibold text-slate-100 transition hover:border-cyan-400" %>
+      </div>
+    </div>
+  <% else %>
+    <div class="w-full max-w-3xl rounded-[32px] border border-slate-800/90 bg-slate-900/90 p-10 shadow-2xl shadow-slate-950/30 backdrop-blur-xl text-center">
+      <p class="text-sm uppercase tracking-[0.35em] text-cyan-300">Bienvenido a ProyectCatec</p>
+      <h1 class="mt-4 text-4xl font-semibold text-white">Administra tu inventario con estilo</h1>
+      <p class="mt-4 text-slate-400">Inicia sesión o regístrate para acceder al dashboard de productos y comenzar a vender.</p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+        <%= link_to "Iniciar sesión", new_session_path, class: "inline-flex items-center justify-center rounded-full bg-cyan-500 px-6 py-4 text-base font-semibold text-slate-950 transition hover:bg-cyan-400" %>
+        <%= link_to "Registrarse", new_registration_path, class: "inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 px-6 py-4 text-base font-semibold text-slate-100 transition hover:border-cyan-400" %>
+      </div>
+    </div>
+  <% end %>
+</div>
