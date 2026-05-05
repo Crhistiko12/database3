@@ -6,6 +6,19 @@
       <p class="mt-4 text-sm leading-6 text-slate-400">Regístrate para comenzar a administrar tus productos en el dashboard.</p>
     </div>
 
+    <% if @user.errors.any? %>
+      <div class="mb-6 rounded-lg border border-red-500/50 bg-red-500/10 p-4">
+        <p class="mb-2 text-sm font-semibold text-red-400">
+          <%= @user.errors.count == 1 ? "Error" : "#{@user.errors.count} errores" %> en el formulario:
+        </p>
+        <ul class="list-inside space-y-1">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li class="text-sm text-red-300">• <%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
     <%= form_with model: @user, url: registration_path, class: "space-y-6" do |f| %>
       <div>
         <label for="user_email_address" class="block text-sm font-semibold text-slate-200">Email</label>
