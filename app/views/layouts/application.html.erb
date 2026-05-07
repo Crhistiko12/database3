@@ -31,6 +31,7 @@
 
         <div class="flex items-center gap-3 text-sm font-medium">
           <% if authenticated? %>
+            <%= link_to "Perfil", profile_path, class: "rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-slate-100 transition hover:border-cyan-400 hover:text-cyan-300" %>
             <%= link_to "Productos", products_path, class: "rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-slate-100 transition hover:border-cyan-400 hover:text-cyan-300" %>
             <%= button_to "Cerrar sesión", session_path, method: :delete, class: "rounded-full bg-cyan-500 px-4 py-2 text-slate-950 transition hover:bg-cyan-400" %>
           <% else %>

@@ -1,0 +1,50 @@
+<% if @sale.persisted? %>
+  <% if params[:action_type] == "view" %>
+    var content = `
+      <div class="space-y-4">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p class="text-sm text-slate-500">Producto</p>
+            <p class="text-lg font-semibold text-white"><%= j @sale.product.name %></p>
+          </div>
+          <div>
+            <p class="text-sm text-slate-500">Cantidad</p>
+            <p class="text-lg font-semibold text-white"><%= @sale.quantity %></p>
+          </div>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p class="text-sm text-slate-500">Precio unitario</p>
+            <p class="text-lg font-semibold text-white">$<%= number_with_precision(@sale.product.price, precision: 2) %></p>
+          </div>
+          <div>
+            <p class="text-sm text-slate-500">Total</p>
+            <p class="text-lg font-semibold text-white">$<%= number_with_precision(@sale.product.price * @sale.quantity, precision: 2) %></p>
+          </div>
+        </div>
+        <div>
+          <p class="text-sm text-slate-500">Comprador</p>
+          <p class="text-lg font-semibold text-white"><%= j @sale.buyer_name %></p>
+          <p class="text-sm text-slate-400"><%= j @sale.buyer_email %></p>
+        </div>
+        <div>
+          <p class="text-sm text-slate-500">Fecha y hora</p>
+          <p class="text-lg font-semibold text-white"><%= l @sale.created_at, format: :long %></p>
+        </div>
+        <div class="pt-4">
+          <a href="<%= sale_path(@sale, format: :pdf) %>" target="_blank" class="inline-flex items-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400">
+            Descargar PDF
+          </a>
+        </div>
+      </div>
+    `;
+    document.querySelector('[data-sale-details-modal-target="content"]').innerHTML = content;
+    document.querySelector('[data-sale-details-modal-target="modal"]').classList.remove("hidden");
+    document.querySelector('[data-sale-modal-target="modal"]').classList.add("hidden");
+  <% elsif params[:action_type] == "finalize" %>
+    alert('Venta finalizada correctamente.');
+    window.location.reload();
+  <% end %>
+<% else %>
+  alert('<%= j @sale.errors.full_messages.to_sentence %>');
+<% end %>

@@ -8,43 +8,51 @@
       </div>
       <div class="flex flex-wrap gap-3">
         <%= link_to "➕ Nuevo Producto", new_product_path, class: "inline-flex items-center rounded-full bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-400" %>
+        <%= link_to "📊 Historial de Ventas", sales_path, class: "inline-flex items-center rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400" %>
       </div>
     </div>
   </div>
 
   <div class="grid gap-6 xl:grid-cols-3 lg:grid-cols-2">
-    <% @products.each do |product| %>
-      <div class="overflow-hidden rounded-3xl border border-slate-800/90 bg-slate-900/75 p-5 shadow-lg shadow-slate-950/20 transition hover:-translate-y-1 hover:border-cyan-500/30 hover:bg-slate-900">
-        <% if product.image.attached? %>
-          <%= image_tag product.image, class: "h-56 w-full rounded-3xl object-cover" %>
-        <% else %>
-          <div class="flex h-56 items-center justify-center rounded-3xl bg-slate-800 text-slate-500">Sin imagen</div>
-        <% end %>
+    <% if @products.any? %>
+      <% @products.each do |product| %>
+        <div class="overflow-hidden rounded-3xl border border-slate-800/90 bg-slate-900/75 p-5 shadow-lg shadow-slate-950/20 transition hover:-translate-y-1 hover:border-cyan-500/30 hover:bg-slate-900">
+          <% if product.image.attached? %>
+            <%= image_tag product.image, class: "h-56 w-full rounded-3xl object-cover" %>
+          <% else %>
+            <div class="flex h-56 items-center justify-center rounded-3xl bg-slate-800 text-slate-500">Sin imagen</div>
+          <% end %>
 
-        <div class="mt-5 space-y-3">
-          <div>
-            <p class="text-xs uppercase tracking-[0.3em] text-cyan-300">Producto</p>
-            <h2 class="mt-2 text-2xl font-semibold text-white"><%= product.name %></h2>
-          </div>
+          <div class="mt-5 space-y-3">
+            <div>
+              <p class="text-xs uppercase tracking-[0.3em] text-cyan-300">Producto</p>
+              <h2 class="mt-2 text-2xl font-semibold text-white"><%= product.name %></h2>
+            </div>
 
-          <div class="flex items-center justify-between gap-3 text-sm text-slate-400">
-            <span>Stock: <strong class="text-slate-100"><%= product.stock %></strong></span>
-            <span class="text-cyan-300">$<%= number_with_precision(product.price, precision: 2) %></span>
-          </div>
+            <div class="flex items-center justify-between gap-3 text-sm text-slate-400">
+              <span>Stock: <strong class="text-slate-100"><%= product.stock %></strong></span>
+              <span class="text-cyan-300">$<%= number_with_precision(product.price, precision: 2) %></span>
+            </div>
 
-          <div class="flex flex-wrap gap-3">
-            <%= link_to "Ver detalles", product, class: "inline-flex rounded-full border border-slate-700 bg-slate-950/80 px-4 py-2 text-sm font-semibold text-white transition hover:border-cyan-400 hover:text-cyan-300" %>
-            <button
-              type="button"
-              data-action="click->sale-modal#open"
-              data-product-id="<%= product.id %>"
-              data-product-name="<%= j product.name %>"
-              class="inline-flex rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400"
-            >
-              Vender
-            </button>
+            <div class="flex flex-wrap gap-3">
+              <%= link_to "Ver detalles", product, class: "inline-flex rounded-full border border-slate-700 bg-slate-950/80 px-4 py-2 text-sm font-semibold text-white transition hover:border-cyan-400 hover:text-cyan-300" %>
+              <button
+                type="button"
+                data-action="click->sale-modal#open"
+                data-product-id="<%= product.id %>"
+                data-product-name="<%= j product.name %>"
+                class="inline-flex rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400"
+              >
+                Vender
+              </button>
+            </div>
           </div>
         </div>
+      <% end %>
+    <% else %>
+      <div class="col-span-full rounded-3xl border border-dashed border-slate-700 bg-slate-950/60 p-12 text-center text-slate-400">
+        <p class="text-lg font-semibold text-white">No tienes productos creados aún.</p>
+        <p class="mt-3">Crea tu primer producto para comenzar a vender y ver tu stock.</p>
       </div>
     <% end %>
   </div>
@@ -60,7 +68,7 @@
         <button type="button" data-action="click->sale-modal#close" class="rounded-full border border-slate-700 bg-slate-950/80 px-4 py-2 text-sm text-slate-300 transition hover:border-red-400 hover:text-white">Cerrar</button>
       </div>
 
-      <%= form_with model: Sale.new, url: sales_path, local: true do |f| %>
+      <%= form_with model: Sale.new, url: sales_path, remote: true, data: { type: 'script' } do |f| %>
         <%= f.hidden_field :product_id, value: "", data: { sale_modal_target: "productId" } %>
 
         <div class="grid gap-4 sm:grid-cols-2">
@@ -80,25 +88,40 @@
           <%= f.number_field :quantity, value: 1, min: 1, class: "w-32 rounded-2xl border border-slate-700 bg-slate-950/90 px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20" %>
         </div>
 
-        <div class="mt-6 grid gap-3 sm:grid-cols-3">
+        <div class="mt-6 space-y-4">
           <div>
             <p class="text-sm text-slate-500">Producto seleccionado:</p>
             <p class="text-lg font-semibold text-white" data-sale-modal-target="productName">---</p>
           </div>
 
-          <button type="submit" name="action_type" value="download" class="inline-flex w-full items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400">
-            Descargar PDF y finalizar
-          </button>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <button type="submit" name="action_type" value="view" class="inline-flex w-full items-center justify-center rounded-full border border-cyan-500 bg-slate-950/90 px-6 py-3 text-sm font-semibold text-cyan-300 transition hover:bg-slate-900">
+              Ver PDF
+            </button>
 
-          <button type="submit" name="action_type" value="view" class="inline-flex w-full items-center justify-center rounded-full border border-cyan-500 bg-slate-950/90 px-6 py-3 text-sm font-semibold text-cyan-300 transition hover:bg-slate-900">
-            Ver PDF y finalizar
-          </button>
-
-          <button type="submit" name="action_type" value="finalize" class="inline-flex w-full items-center justify-center rounded-full bg-slate-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-600">
-            Finalizar Venta
-          </button>
+            <button type="submit" name="action_type" value="finalize" class="inline-flex w-full items-center justify-center rounded-full bg-slate-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-600">
+              Finalizar Venta
+            </button>
+          </div>
         </div>
       <% end %>
+    </div>
+  </div>
+
+  <div data-controller="sale-details-modal" data-sale-details-modal-target="modal" class="fixed inset-0 z-60 hidden flex items-center justify-center bg-slate-950/70 p-4">
+    <div class="w-full max-w-2xl rounded-3xl border border-slate-800/90 bg-slate-900/95 p-6 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
+      <div class="flex items-start justify-between gap-4 pb-4">
+        <div>
+          <p class="text-sm uppercase tracking-[0.35em] text-cyan-300">Detalles de Venta</p>
+          <h2 class="mt-2 text-3xl font-semibold text-white">Recibo de compra</h2>
+          <p class="mt-1 text-sm text-slate-400">Información completa de la transacción.</p>
+        </div>
+        <button type="button" data-action="click->sale-details-modal#close" class="rounded-full border border-slate-700 bg-slate-950/80 px-4 py-2 text-sm text-slate-300 transition hover:border-red-400 hover:text-white">Cerrar</button>
+      </div>
+
+      <div data-sale-details-modal-target="content">
+        <!-- Contenido dinámico aquí -->
+      </div>
     </div>
   </div>
 </div>
